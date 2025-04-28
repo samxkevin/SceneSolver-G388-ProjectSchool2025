@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Contact Us | CrimeSceneSolver</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto&display=swap"
+  rel="stylesheet">
+</head>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #0f0f0f, #1a0000);
+      color: white;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 50px;
+      background-color: #111;
+      border-bottom: 1px solid #222;
+    }
+    header .logo {
+      font-size: 1.5rem;
+      color: #ff3c57;
+      font-family: 'Orbitron', sans-serif;
+    }
+    nav a {
+      margin-left: 30px;
+      color: #ccc;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    nav a:hover {
+      color: #ff3c57;
+    }
+    .contact-section {
+      max-width: 600px;
+      margin: 60px auto;
+      background-color: #1b1b1b;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(255, 60, 87, 0.2);
+    }
+    .contact-section h2 {
+      text-align: center;
+      color: #ff3c57;
+      margin-bottom: 20px;
+      font-family: 'Orbitron', sans-serif;
+    }
+    .contact-section input,
+    .contact-section textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      background-color: #111;
+      border: 1px solid #333;
+      color: white;
+      border-radius: 6px;
+    }
+    .contact-section button {
+      width: 100%;
+      padding: 12px;
+      background-color: #ff3c57;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .contact-section button:hover {
+      background-color: #e0334b;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+
+<body>
+
+  <header>
+    <div class="logo">CrimeSceneSolver</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="features.html">Features</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="contact.html" >Contact</a>
+    </nav>
+  </header>
+
+  <section class="contact-section">
+    <h2>Contact Us</h2>
+    <form action="#" method="post">
+      <input type="text" name="name" placeholder="Name" required />
+      <input type="email" name="email" placeholder="Email" required />
+      <input type="tel" name="phone" placeholder="Phone Number" pattern="[0-9]{10}" title="Enter a 10-digit phone number" required />
+      <textarea name="message" rows="6" placeholder="Message" required></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+  </section>
+
+  <footer>
+    &copy; 2025 CrimeSceneSolver. All rights reserved.
+  </footer>
+
+</body>
+</html>
