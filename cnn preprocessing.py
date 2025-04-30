@@ -1,0 +1,45 @@
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
+import numpy as np
+import cv2
+
+
+from google.colab import files
+
+uploaded = files.upload()  #
+
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
+import numpy as np
+import cv2
+from matplotlib import pyplot as plt
+
+image_path = list(uploaded.keys())[0]  # Get the uploaded filename dynamically
+image = cv2.imread(image_path)
+image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # Convert BGR to RGB for correct color representation
+image = cv2.resize(image, (128, 128))  # Resize to match CNN input size
+image = image.astype('float32') / 255.0  # Normalize
+image = np.expand_dims(image, axis=0)  # Add batch dimension
+
+plt.imshow(image[0])
+plt.axis('on')
+plt.show()
+
+model = Sequential([
+    Conv2D(32, (3, 3), activation='relu', input_shape=(128, 128, 3)),
+    MaxPooling2D(pool_size=(2, 2)),
+    Conv2D(64, (3, 3), activation='relu'),
+    MaxPooling2D(pool_size=(2, 2)),
+    Flatten(),
+    Dense(128, activation='relu'),
+    Dense(10, activation='softmax')  # Output layer for classification (10 classes as an example)
+])
+
+# Compile the model
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy']) 
+
+predictions = model.predict(image)
+print("Predicted Class Probabilities:", predictions)
+print("Predicted Class:", np.argmax(predictions))
