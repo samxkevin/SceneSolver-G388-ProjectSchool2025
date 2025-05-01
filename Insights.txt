@@ -257,3 +257,183 @@ if missing_files:
         print(file)
 else:
     print("All video files exist.")
+
+SOME IMPORTANT CODE STUBS IN THE Temporal Training File:
+```
+# 1. Temporal Attention Mechanism
+class TemporalAttention(nn.Module):
+    def __init__(self, embed_dim):
+        super().__init__()
+        self.query = nn.Linear(embed_dim, embed_dim)
+        self.key = nn.Linear(embed_dim, embed_dim)
+        self.value = nn.Linear(embed_dim, embed_dim)
+        self.scale = embed_dim ** -0.5
+
+    def forward(self, x):
+        # x shape: [batch_size, num_frames, embed_dim]
+        q = self.query(x)  # [batch_size, num_frames, embed_dim]
+        k = self.key(x)    # [batch_size, num_frames, embed_dim]
+        v = self.value(x)  # [batch_size, num_frames, embed_dim]
+
+        # Compute attention scores
+        attn = (q @ k.transpose(-2, -1)) * self.scale  # [batch_size, num_frames, num_frames]
+        attn = torch.softmax(attn, dim=-1)
+
+        # Apply attention to values
+        out = attn @ v  # [batch_size, num_frames, embed_dim]
+        return out
+
+# 2. Enhanced TimeSformer model with temporal attention
+class EnhancedTimeSformer(nn.Module):
+    def __init__(self, base_model, num_frames=8, embed_dim=768):
+        super().__init__()
+        self.feature_extractor = base_model  # Use our feature extractor
+        self.temporal_attention = TemporalAttention(embed_dim)
+        self.frame_classifier = nn.Linear(embed_dim, CONFIG['NUM_CLASSES'])
+        self.final_classifier = nn.Linear(embed_dim, CONFIG['NUM_CLASSES'])
+
+    def forward(self, x):
+        # x shape: [batch_size, num_frames, channels, height, width]
+        batch_size, num_frames, channels, height, width = x.shape
+
+        # Get per-frame embeddings from feature extractor
+        frame_features = []
+        for i in range(num_frames):
+            # Process one frame at a time
+            frame = x[:, i, :, :, :]  # [batch_size, channels, height, width]
+            frame_embedding = self.feature_extractor(frame)  # [batch_size, embed_dim]
+            frame_features.append(frame_embedding)
+
+        # Stack frame features
+        frame_features = torch.stack(frame_features, dim=1)  # [batch_size, num_frames, embed_dim]
+
+        # Apply temporal attention
+        attended_features = self.temporal_attention(frame_features)
+
+        # Combine features (residual connection)
+        combined_features = frame_features + attended_features
+
+        # Average pooling over frames
+        pooled_features = torch.mean(combined_features, dim=1)  # [batch_size, embed_dim]
+
+        # Final classification
+        output = self.final_classifier(pooled_features)
+
+        return output
+
+# 3. Temporal Annotation Dataset - Key methods
+class TemporalAnnotatedVideoDataset(Dataset):
+    def _load_annotations(self, annotation_file):
+        """Load temporal annotations from file"""
+        try:
+            with open(annotation_file, 'r') as f:
+                for line in f:
+                    parts = line.strip().split()
+                    if len(parts) >= 4:  # Need at least video name, event, start and end
+                        video_name = parts[0]
+                        event_name = parts[1]
+
+                        # Parse start and end frames
+                        try:
+                            start_frame = int(parts[2])
+                            end_frame = int(parts[3])
+
+                            # Handle second instance if available
+                            second_start = -1
+                            second_end = -1
+                            if len(parts) >= 6:
+                                try:
+                                    second_start = int(parts[4])
+                                    second_end = int(parts[5])
+                                except ValueError:
+                                    second_start = -1
+                                    second_end = -1
+
+                            self.annotations[video_name] = {
+                                'event': event_name,
+                                'start_frame': start_frame,
+                                'end_frame': end_frame,
+                                'second_start': second_start,
+                                'second_end': second_end
+                            }
+                        except ValueError as e:
+                            print(f"Warning: Could not parse frame numbers for video {video_name}: {e}")
+                            continue
+            return True
+        except Exception as e:
+            print(f"Error loading annotations: {e}")
+            return False
+
+    # 4. Targeted Frame Selection from Annotations
+    def __getitem__(self, idx):
+        video_path = self.video_paths[idx]
+        label = self.labels[idx]
+
+        try:
+            # Get video filename for matching with annotations
+            video_filename = os.path.basename(video_path)
+
+            # Load video
+            vr = decord.VideoReader(video_path)
+            total_frames = len(vr)
+
+            # Check if we have annotations and should use them
+            has_annotation = video_filename in self.annotations and self.use_annotations
+
+            # Normal class index from CONFIG
+            normal_class_index = CONFIG['normal_class_index']
+
+            if has_annotation and label != normal_class_index:  # If not "Normal" class
+                # Get annotation data
+                anno = self.annotations[video_filename]
+
+                # Focus frames selection on anomalous event
+                start_frame = anno['start_frame']
+                end_frame = anno['end_frame']
+
+                # If there's a second instance, include it too
+                if anno['second_start'] > 0 and anno['second_end'] > 0:
+                    # Randomly choose between first and second instance
+                    if np.random.random() > 0.5:
+                        start_frame = anno['second_start']
+                        end_frame = anno['second_end']
+
+                # Make sure frames are within video bounds
+                start_frame = max(0, start_frame)
+                end_frame = min(total_frames - 1, end_frame)
+
+                # If valid range exists
+                if start_frame < end_frame and end_frame - start_frame >= self.num_frames:
+                    # Sample uniformly from the anomalous event
+                    frame_indices = np.linspace(start_frame, end_frame, self.num_frames, dtype=int)
+                else:
+                    # Fallback to regular sampling
+                    frame_indices = np.linspace(0, total_frames - 1, self.num_frames, dtype=int)
+            else:
+                # Standard frame sampling for normal videos or when annotations aren't available
+                frame_indices = np.linspace(0, total_frames - 1, self.num_frames, dtype=int)
+
+            # Get frames
+            frames = vr.get_batch(frame_indices).asnumpy()
+            
+            # Process frames...
+            # [rest of processing code omitted for brevity]
+
+        except Exception as e:
+            print(f"Error loading video {video_path}: {e}")
+            # Return a dummy tensor in case of error
+            dummy_tensor = torch.zeros((self.num_frames, 3, self.target_size[0], self.target_size[1]))
+            return dummy_tensor, torch.tensor(0, dtype=torch.long)
+
+# 5. Class-Weighted Loss Function implementation
+def continue_training_with_temporal_annotations(...):
+    # [other code omitted]
+    
+    # Define class weights to handle imbalance
+    class_weights = torch.ones(CONFIG['NUM_CLASSES'], device=device)
+    # Normal class usually has more samples, so lower its weight
+    class_weights[CONFIG['normal_class_index']] = CONFIG['normal_class_weight']
+    criterion = nn.CrossEntropyLoss(weight=class_weights)
+    
+    # [rest of function omitted]
+```
