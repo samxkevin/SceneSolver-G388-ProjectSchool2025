@@ -1,0 +1,149 @@
+WITH COMPLETE JUDGEMENT AND BRUTAL HONESTY, JUST ACT AND DON'T WASTE TIME.
+
+These phases of Development for our Project were made to move the project in a refined all these days we were working as if we are in student mode really very recklessly. With this file we aim to document each and every step that we take with regards to the development and progress of our project for complete accountability(at least in the case of the CORE FUNCTIONALITY).
+
+Corrected Full SceneSolver Project Flow
+Phase 1: Dataset Integrity
+
+Clean videos, verify against train.txt.
+
+No missing files, no broken paths.
+
+Phase 2: Frame Extraction
+
+Uniformly sample frames per video (16–32 frames).
+
+OR dynamically sample frames based on video length.
+
+Phase 3: CLIP-Based Keyframe Selection
+
+Use pre-trained CLIP (or lightweight Vision Transformer) to rank frames.
+
+Select only action-representative frames based on visual-semantic relevance.
+
+Purpose: Preserve temporal context without bloating computation.
+
+Without this step, you are just feeding garbage sequences to TimeSformer.
+
+Phase 4: Binary Anomaly Detection
+
+Train/fine-tune TimeSformer to classify normal vs anomalous.
+
+Prioritize temporal understanding, not just isolated frame analysis.
+
+Phase 5: Crime Type Classification (Only Anomalies)
+
+Fine-tune the classifier head for 13–14 crime categories.
+
+Normal videos can be filtered out beforehand.
+
+Phase 6: Evidence Extraction
+
+Run YOLOv8 (or custom-trained detector) only on anomalous video keyframes.
+
+Focus on weapons, dangerous objects, suspicious activity.
+
+Phase 7: Crime Report Generation
+
+Video-LLaVA or similar model ingests keyframes + detected objects.
+
+Outputs structured, natural language crime scene reports.
+
+Now its 28-04-2025 The time is 05:16PM:
+We are now moving on with Dataset Integrity Checking.
+This files were missing in our dataset upon checking:
+```
+Arson/Arson024_x264.mp4
+Assault/Assault007_x264.mp4
+RoadAccidents/RoadAccidents052_x264.mp4
+RoadAccidents/RoadAccidents053_x264.mp4
+RoadAccidents/RoadAccidents054_x264.mp4
+RoadAccidents/RoadAccidents055_x264.mp4
+RoadAccidents/RoadAccidents056_x264.mp4
+RoadAccidents/RoadAccidents057_x264.mp4
+RoadAccidents/RoadAccidents058_x264.mp4
+RoadAccidents/RoadAccidents059_x264.mp4
+RoadAccidents/RoadAccidents060_x264.mp4
+RoadAccidents/RoadAccidents061_x264.mp4
+RoadAccidents/RoadAccidents062_x264.mp4
+RoadAccidents/RoadAccidents063_x264.mp4
+RoadAccidents/RoadAccidents064_x264.mp4
+RoadAccidents/RoadAccidents065_x264.mp4
+RoadAccidents/RoadAccidents066_x264.mp4
+RoadAccidents/RoadAccidents067_x264.mp4
+RoadAccidents/RoadAccidents068_x264.mp4
+RoadAccidents/RoadAccidents069_x264.mp4
+RoadAccidents/RoadAccidents070_x264.mp4
+RoadAccidents/RoadAccidents071_x264.mp4
+RoadAccidents/RoadAccidents072_x264.mp4
+RoadAccidents/RoadAccidents073_x264.mp4
+RoadAccidents/RoadAccidents074_x264.mp4
+RoadAccidents/RoadAccidents075_x264.mp4
+RoadAccidents/RoadAccidents076_x264.mp4
+RoadAccidents/RoadAccidents077_x264.mp4
+RoadAccidents/RoadAccidents078_x264.mp4
+RoadAccidents/RoadAccidents079_x264.mp4
+RoadAccidents/RoadAccidents080_x264.mp4
+RoadAccidents/RoadAccidents081_x264.mp4
+RoadAccidents/RoadAccidents082_x264.mp4
+RoadAccidents/RoadAccidents083_x264.mp4
+RoadAccidents/RoadAccidents084_x264.mp4
+RoadAccidents/RoadAccidents085_x264.mp4
+RoadAccidents/RoadAccidents086_x264.mp4
+RoadAccidents/RoadAccidents087_x264.mp4
+RoadAccidents/RoadAccidents088_x264.mp4
+RoadAccidents/RoadAccidents089_x264.mp4
+RoadAccidents/RoadAccidents090_x264.mp4
+RoadAccidents/RoadAccidents091_x264.mp4
+RoadAccidents/RoadAccidents092_x264.mp4
+RoadAccidents/RoadAccidents093_x264.mp4
+RoadAccidents/RoadAccidents094_x264.mp4
+RoadAccidents/RoadAccidents095_x264.mp4
+RoadAccidents/RoadAccidents096_x264.mp4
+RoadAccidents/RoadAccidents097_x264.mp4
+RoadAccidents/RoadAccidents098_x264.mp4
+RoadAccidents/RoadAccidents099_x264.mp4
+RoadAccidents/RoadAccidents100_x264.mp4
+RoadAccidents/RoadAccidents101_x264.mp4
+RoadAccidents/RoadAccidents102_x264.mp4
+RoadAccidents/RoadAccidents103_x264.mp4
+RoadAccidents/RoadAccidents104_x264.mp4
+RoadAccidents/RoadAccidents105_x264.mp4
+RoadAccidents/RoadAccidents106_x264.mp4
+RoadAccidents/RoadAccidents107_x264.mp4
+RoadAccidents/RoadAccidents108_x264.mp4
+RoadAccidents/RoadAccidents109_x264.mp4
+RoadAccidents/RoadAccidents110_x264.mp4
+RoadAccidents/RoadAccidents111_x264.mp4
+RoadAccidents/RoadAccidents112_x264.mp4
+RoadAccidents/RoadAccidents113_x264.mp4
+RoadAccidents/RoadAccidents114_x264.mp4
+RoadAccidents/RoadAccidents115_x264.mp4
+RoadAccidents/RoadAccidents116_x264.mp4
+RoadAccidents/RoadAccidents117_x264.mp4
+RoadAccidents/RoadAccidents118_x264.mp4
+RoadAccidents/RoadAccidents119_x264.mp4
+RoadAccidents/RoadAccidents120_x264.mp4
+RoadAccidents/RoadAccidents126_x264.mp4
+RoadAccidents/RoadAccidents129_x264.mp4
+RoadAccidents/RoadAccidents130_x264.mp4
+RoadAccidents/RoadAccidents134_x264.mp4
+RoadAccidents/RoadAccidents135_x264.mp4
+RoadAccidents/RoadAccidents136_x264.mp4
+RoadAccidents/RoadAccidents137_x264.mp4
+RoadAccidents/RoadAccidents138_x264.mp4
+RoadAccidents/RoadAccidents139_x264.mp4
+RoadAccidents/RoadAccidents140_x264.mp4
+RoadAccidents/RoadAccidents141_x264.mp4
+RoadAccidents/RoadAccidents142_x264.mp4
+RoadAccidents/RoadAccidents143_x264.mp4
+RoadAccidents/RoadAccidents144_x264.mp4
+RoadAccidents/RoadAccidents145_x264.mp4
+RoadAccidents/RoadAccidents146_x264.mp4
+RoadAccidents/RoadAccidents147_x264.mp4
+RoadAccidents/RoadAccidents148_x264.mp4
+RoadAccidents/RoadAccidents149_x264.mp4
+RoadAccidents/RoadAccidents150_x264.mp4
+RoadAccidents/RoadAccidents151_x264.mp4
+```
+Finding on ways to get them back...
