@@ -147,3 +147,113 @@ RoadAccidents/RoadAccidents150_x264.mp4
 RoadAccidents/RoadAccidents151_x264.mp4
 ```
 Finding on ways to get them back...
+Downloaded those files succesfully. The Dataset is intact now. Used the Script:
+```
+ from google.colab import drive
+drive.mount('/content/drive')
+
+import os
+
+train_txt_raw = """
+Arson/Arson024_x264.mp4
+Assault/Assault007_x264.mp4
+RoadAccidents/RoadAccidents052_x264.mp4
+RoadAccidents/RoadAccidents053_x264.mp4
+RoadAccidents/RoadAccidents054_x264.mp4
+RoadAccidents/RoadAccidents055_x264.mp4
+RoadAccidents/RoadAccidents056_x264.mp4
+RoadAccidents/RoadAccidents057_x264.mp4
+RoadAccidents/RoadAccidents058_x264.mp4
+RoadAccidents/RoadAccidents059_x264.mp4
+RoadAccidents/RoadAccidents060_x264.mp4
+RoadAccidents/RoadAccidents061_x264.mp4
+RoadAccidents/RoadAccidents062_x264.mp4
+RoadAccidents/RoadAccidents063_x264.mp4
+RoadAccidents/RoadAccidents064_x264.mp4
+RoadAccidents/RoadAccidents065_x264.mp4
+RoadAccidents/RoadAccidents066_x264.mp4
+RoadAccidents/RoadAccidents067_x264.mp4
+RoadAccidents/RoadAccidents068_x264.mp4
+RoadAccidents/RoadAccidents069_x264.mp4
+RoadAccidents/RoadAccidents070_x264.mp4
+RoadAccidents/RoadAccidents071_x264.mp4
+RoadAccidents/RoadAccidents072_x264.mp4
+RoadAccidents/RoadAccidents073_x264.mp4
+RoadAccidents/RoadAccidents074_x264.mp4
+RoadAccidents/RoadAccidents075_x264.mp4
+RoadAccidents/RoadAccidents076_x264.mp4
+RoadAccidents/RoadAccidents077_x264.mp4
+RoadAccidents/RoadAccidents078_x264.mp4
+RoadAccidents/RoadAccidents079_x264.mp4
+RoadAccidents/RoadAccidents080_x264.mp4
+RoadAccidents/RoadAccidents081_x264.mp4
+RoadAccidents/RoadAccidents082_x264.mp4
+RoadAccidents/RoadAccidents083_x264.mp4
+RoadAccidents/RoadAccidents084_x264.mp4
+RoadAccidents/RoadAccidents085_x264.mp4
+RoadAccidents/RoadAccidents086_x264.mp4
+RoadAccidents/RoadAccidents087_x264.mp4
+RoadAccidents/RoadAccidents088_x264.mp4
+RoadAccidents/RoadAccidents089_x264.mp4
+RoadAccidents/RoadAccidents090_x264.mp4
+RoadAccidents/RoadAccidents091_x264.mp4
+RoadAccidents/RoadAccidents092_x264.mp4
+RoadAccidents/RoadAccidents093_x264.mp4
+RoadAccidents/RoadAccidents094_x264.mp4
+RoadAccidents/RoadAccidents095_x264.mp4
+RoadAccidents/RoadAccidents096_x264.mp4
+RoadAccidents/RoadAccidents097_x264.mp4
+RoadAccidents/RoadAccidents098_x264.mp4
+RoadAccidents/RoadAccidents099_x264.mp4
+RoadAccidents/RoadAccidents100_x264.mp4
+RoadAccidents/RoadAccidents101_x264.mp4
+RoadAccidents/RoadAccidents102_x264.mp4
+RoadAccidents/RoadAccidents103_x264.mp4
+RoadAccidents/RoadAccidents104_x264.mp4
+RoadAccidents/RoadAccidents105_x264.mp4
+RoadAccidents/RoadAccidents106_x264.mp4
+RoadAccidents/RoadAccidents107_x264.mp4
+RoadAccidents/RoadAccidents108_x264.mp4
+RoadAccidents/RoadAccidents109_x264.mp4
+RoadAccidents/RoadAccidents110_x264.mp4
+RoadAccidents/RoadAccidents111_x264.mp4
+RoadAccidents/RoadAccidents112_x264.mp4
+RoadAccidents/RoadAccidents113_x264.mp4
+RoadAccidents/RoadAccidents114_x264.mp4
+RoadAccidents/RoadAccidents115_x264.mp4
+RoadAccidents/RoadAccidents116_x264.mp4
+RoadAccidents/RoadAccidents117_x264.mp4
+RoadAccidents/RoadAccidents118_x264.mp4
+RoadAccidents/RoadAccidents119_x264.mp4
+RoadAccidents/RoadAccidents120_x264.mp4
+RoadAccidents/RoadAccidents126_x264.mp4
+RoadAccidents/RoadAccidents129_x264.mp4
+RoadAccidents/RoadAccidents130_x264.mp4
+RoadAccidents/RoadAccidents134_x264.mp4
+RoadAccidents/RoadAccidents135_x264.mp4
+RoadAccidents/RoadAccidents136_x264.mp4
+RoadAccidents/RoadAccidents137_x264.mp4
+RoadAccidents/RoadAccidents138_x264.mp4
+RoadAccidents/RoadAccidents139_x264.mp4
+RoadAccidents/RoadAccidents140_x264.mp4
+RoadAccidents/RoadAccidents141_x264.mp4
+RoadAccidents/RoadAccidents142_x264.mp4
+RoadAccidents/RoadAccidents143_x264.mp4
+RoadAccidents/RoadAccidents144_x264.mp4
+RoadAccidents/RoadAccidents145_x264.mp4
+RoadAccidents/RoadAccidents146_x264.mp4
+RoadAccidents/RoadAccidents147_x264.mp4
+RoadAccidents/RoadAccidents148_x264.mp4
+RoadAccidents/RoadAccidents149_x264.mp4
+RoadAccidents/RoadAccidents150_x264.mp4
+RoadAccidents/RoadAccidents151_x264.mp4
+"""
+base_path = "/content/drive/MyDrive/AnomalyDetection"
+video_paths = [line.strip() for line in train_txt_raw.strip().splitlines() if line.strip()]
+missing_files = [vp for vp in video_paths if not os.path.isfile(os.path.join(base_path, vp))]
+if missing_files:
+    print("Missing video files:")
+    for file in missing_files:
+        print(file)
+else:
+    print("All video files exist.")
