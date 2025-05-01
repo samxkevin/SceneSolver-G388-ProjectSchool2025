@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crime Scene Solver Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto&display=swap"
+        rel="stylesheet">
+    </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+    <footer class="footer">
+      <div class="footer-content">
+          <p>&copy; 2025 CrimeSceneSolver. All rights reserved.</p>
+          <div class="footer-links">
+              <a href="#">Privacy</a>
+              <a href="#">Terms</a>
+              <a href="#">Support</a>
+          </div>
+      </div>
+  </footer>
+  </body>
+  <style>
+    body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #220000 50%, #0f0f0f 100%);
+            color: #e0e0e0;
+        }
+
+        h1.logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: #ff4757;
+        }
+
+        .btn,
+        .btn-lg {
+            background-color: #ff4757;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            color: white;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            display: inline-block;
+        }
+
+        .btn:hover,
+        .btn-lg:hover {
+            background-color: #ff6b81;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 6rem 1rem;
+            background: url('https://images.unsplash.com/photo-1514849322284-3713f2c76995?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80') center/cover no-repeat; /* Crime scene tape */
+            color: #fff;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #ff4757;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: #f0f0f0;
+            margin-top: 1rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+        }
+
+        .features-section {
+            padding: 5rem 1rem;
+            background-color: #1a1a1a;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .feature-card {
+            background-color: #2e2e2e;
+            padding: 2.5rem;
+            border-radius: 0.75rem;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(255, 71, 87, 0.2);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .how-it-works {
+            padding: 5rem 1rem;
+            background: linear-gradient(to right, #111, #1e1e1e);
+            color: #e5e5e5;
+        }
+
+        .how-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .emoji {
+            font-size: 2.5rem;
+        }
+
+        .testimonials {
+            padding: 6rem 1rem;
+            background: url('https://images.unsplash.com/photo-1550527685-1c64981180b6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80') center/cover no-repeat; /* Investigators working */
+            text-align: center;
+            color: #fff;
+        }
+
+        .quote {
+            font-style: italic;
+            color: #ddd;
+            max-width: 700px;
+            margin: 1.5rem auto;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+        }
+
+        .quote-author {
+            font-weight: bold;
+            color: #ff4757;
+            margin-top: 0.5rem;
+            display: block;
+        }
+
+        .footer {
+            background-color: #0f0f0f;
+            padding: 2.5rem 1rem;
+            text-align: center;
+            color: #888;
+            border-top: 1px solid #222;
+        }
+
+        .footer-links a {
+            margin: 0 0.75rem;
+            color: #aaa;
+            text-decoration: underline;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #ccc;
+        }
+
+        .pricing-section,
+        .contact-section {
+            padding: 4rem 1rem;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            text-align: center;
+        }
+
+        .pricing-section h3,
+        .contact-section h3 {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            color: #ff4757;
+        }
+
+        .pricing-info {
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .contact-info {
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+</style>
+</html>

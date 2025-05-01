@@ -1,0 +1,118 @@
+/* Login.css - Scoped styles for the login component */
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    /* Inherit body background from index.html */
+}
+
+/* Override navigation styles specifically for login page */
+.login-container nav.login-nav {
+    width: 100%;
+    background-color: rgba(26, 26, 26, 0.85); 
+    border-bottom: 1px solid #ff4757;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 100px;
+}
+
+.login-container nav.login-nav a {
+    color: #e0e0e0;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.login-container nav.login-nav a:hover {
+    color: #ff4757;
+}
+
+.login-container nav.login-nav .logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    color: #ff4757;
+}
+
+.login-container nav.login-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 1.5rem;
+}
+
+/* Form container styles */
+.login-container .form-container {
+    max-width: 28rem;
+    width: 100%;
+    padding: 2rem;
+    background-color: rgba(26, 26, 26, 0.85);
+    border: 1px solid #ff4757;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 20px rgba(255, 71, 87, 0.3);
+    margin-top: 2rem;
+}
+
+/* Form transition animations */
+.login-container .form-slide {
+    transition: all 0.5s ease-in-out;
+}
+
+.login-container .form-hidden {
+    transform: translateX(100%);
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+}
+
+.login-container .form-visible {
+    transform: translateX(0);
+    opacity: 1;
+    position: relative;
+    width: 100%;
+}
+
+/* Form element styles */
+.login-container label {
+    color: #ff4757;
+}
+
+.login-container input[type="text"],
+.login-container input[type="password"],
+.login-container input[type="email"] {
+    background-color: #0f0f0f;
+    border: 1px solid #444;
+    color: #e0e0e0;
+}
+
+.login-container input[type="checkbox"] {
+    accent-color: #ff4757;
+}
+
+/* Only style buttons that aren't already styled by Tailwind */
+.login-container button:not([class*="bg-"]) {
+    background-color: transparent;
+    color: #ff4757;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.login-container button:not([class*="bg-"]):hover {
+    color: #ff6b81;
+}
+
+/* Link styles within login container */
+.login-container a {
+    color: #ff4757;
+    font-weight: medium;
+    transition: color 0.3s;
+}
+
+.login-container a:hover {
+    color: #ff6b81;
+}
