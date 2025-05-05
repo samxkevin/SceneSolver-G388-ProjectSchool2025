@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SceneSolver API Test Client</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #results {
+      white-space: pre-wrap;
+      background-color: #f5f5f5;
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 20px;
+      min-height: 100px;
+    }
+    .progress {
+      display: none;
+      margin-top: 15px;
+    }
+    input[type="file"] {
+      margin-bottom: 15px;
+    }
+    .top-prediction {
+      margin-bottom: 8px;
+      padding: 10px;
+      border-radius: 4px;
+      background-color: #f0f0f0;
+    }
+    .prediction-bar {
+      height: 20px;
+      background-color: #4CAF50;
+      border-radius: 4px;
+    }
+    #video-preview {
+      max-width: 100%;
+      max-height: 300px;
+      margin-top: 15px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>SceneSolver API Test Client</h1>
+  
+  <div class="section">
+    <h2>1. Health Check</h2>
+    <button onclick="checkHealth()">Check API Health</button>
+    <div id="health-result"></div>
+  </div>
+  
+  <div class="section">
+    <h2>2. Model Information</h2>
+    <button onclick="getModelInfo()">Get Model Info</button>
+    <div id="model-info-result"></div>
+  </div>
+  
+  <div class="section">
+    <h2>3. Upload & Classify Video</h2>
+    <input type="file" id="video-upload" accept="video/*" onchange="previewVideo(this)">
+    <video id="video-preview" controls></video>
+    <br>
+    <button onclick="uploadVideo()">Upload & Classify</button>
+    <div class="progress" id="upload-progress">Processing video...</div>
+    
+    <div id="visual-results" style="margin-top: 20px; display: none;">
+      <h3>Classification Results:</h3>
+      <div id="prediction-results"></div>
+    </div>
+    
+    <div id="results"></div>
+  </div>
+
+  <script>
+    // Base API URL - Change this to match your Flask API endpoint
+    const API_BASE_URL = 'http://localhost:5000';
+    
+    // Health check function
+    async function checkHealth() {
+      const healthResult = document.getElementById('health-result');
+      healthResult.innerHTML = 'Checking API health...';
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/health`);
+        const data = await response.json();
+        
+        healthResult.innerHTML = `
+          <p>Status: <strong>${data.status}</strong></p>
+          <p>Message: ${data.message}</p>
+          <p>Timestamp: ${new Date(data.timestamp * 1000).toLocaleString()}</p>
+        `;
+      } catch (error) {
+        healthResult.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+        console.error('Health check error:', error);
+      }
+    }
+    
+    // Get model info function
+    async function getModelInfo() {
+      const modelInfoResult = document.getElementById('model-info-result');
+      modelInfoResult.innerHTML = 'Fetching model information...';
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/model/info`);
+        const data = await response.json();
+        
+        let classNamesHtml = '';
+        if (data.class_names) {
+          classNamesHtml = '<p>Classes:</p><ul>';
+          data.class_names.forEach((className, index) => {
+            classNamesHtml += `<li>${index}: ${className}</li>`;
+          });
+          classNamesHtml += '</ul>';
+        }
+        
+        modelInfoResult.innerHTML = `
+          <p>Model Name: <strong>${data.model_name}</strong></p>
+          <p>Number of Classes: ${data.num_classes}</p>
+          <p>Device: ${data.device}</p>
+          ${classNamesHtml}
+        `;
+      } catch (error) {
+        modelInfoResult.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+        console.error('Model info error:', error);
+      }
+    }
+    
+    // Preview the selected video
+    function previewVideo(input) {
+      const preview = document.getElementById('video-preview');
+      const file = input.files[0];
+      
+      if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = 'block';
+      }
+    }
+    
+    // Upload and classify video function
+    async function uploadVideo() {
+      const fileInput = document.getElementById('video-upload');
+      const results = document.getElementById('results');
+      const progressDiv = document.getElementById('upload-progress');
+      const visualResults = document.getElementById('visual-results');
+      const predictionResults = document.getElementById('prediction-results');
+      
+      // Check if a file is selected
+      if (fileInput.files.length === 0) {
+        results.textContent = 'Error: Please select a video file first.';
+        return;
+      }
+      
+      const file = fileInput.files[0];
+      
+      // Create form data and append the file
+      const formData = new FormData();
+      formData.append('video', file);
+      
+      // Show progress indicator
+      progressDiv.style.display = 'block';
+      results.textContent = 'Uploading and processing video...';
+      visualResults.style.display = 'none';
+      
+      try {
+        // Send the request
+        const response = await fetch(`${API_BASE_URL}/api/classify`, {
+          method: 'POST',
+          body: formData
+        });
+        
+        const data = await response.json();
+        
+        // Format the results
+        results.textContent = JSON.stringify(data, null, 2);
+        
+        // Hide progress indicator
+        progressDiv.style.display = 'none';
+        
+        // Display visual results if successful
+        if (data.status === 'success') {
+          visualResults.style.display = 'block';
+          
+          // Clear previous results
+          predictionResults.innerHTML = '';
+          
+          // Add top predictions with visual bars
+          data.results.top_predictions.forEach(prediction => {
+            const predDiv = document.createElement('div');
+            predDiv.className = 'top-prediction';
+            
+            const barDiv = document.createElement('div');
+            barDiv.className = 'prediction-bar';
+            barDiv.style.width = `${prediction.percent}%`;
+            
+            predDiv.innerHTML = `
+              <strong>${prediction.name}</strong> (${prediction.percent}%)
+            `;
+            predDiv.appendChild(barDiv);
+            
+            predictionResults.appendChild(predDiv);
+          });
+        }
+      } catch (error) {
+        progressDiv.style.display = 'none';
+        results.textContent = `Error: ${error.message}`;
+        console.error('Upload error:', error);
+      }
+    }
+    
+    // Run health check on page load
+    window.onload = checkHealth;
+  </script>
+</body>
+</html>
