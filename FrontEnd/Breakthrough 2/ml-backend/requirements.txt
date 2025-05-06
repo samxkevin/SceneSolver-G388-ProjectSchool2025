@@ -1,9 +1,0 @@
-flask-cors==3.0.10
-transformers
-numpy
-Pillow
-huggingface-hub
-safetensors
-Flask==2.0.1
-Werkzeug==2.0.1
-opencv-python==4.7.0.72
