@@ -44,7 +44,8 @@ function Index() {
                         <h4 className="text-xl font-semibold mb-3">AI Crime Pattern Detection</h4>
                         <img
                             src="http://localhost:5000/uploads/crime1.jpeg"
-                            alt="Crime Scene"
+                            alt="Network graph visualizing connections and patterns in data"
+
                             className="w-full rounded mb-3"
                         />
                         <p>
@@ -55,7 +56,7 @@ function Index() {
                     <div className="feature-card">
                         <h4 className="text-xl font-semibold mb-3">Real-time Collaboration</h4>
                         <img
-                            src="http://localhost:5000/uploads/crime1.jpeg"
+                            src="http://localhost:5000/uploads/crime2.jpeg"
                             alt="Crime Scene"
                             className="w-full rounded mb-3"
                         />
