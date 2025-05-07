@@ -1,18 +1,65 @@
-import React from "react";
-import { Link } from 'react-router-dom'; // Import Link
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 function Index() {
+    const { isAuthenticated, user, logout } = useAuth();
+    const navigate = useNavigate();
+    const [showMessage, setShowMessage] = useState(false);
+    const [message, setMessage] = useState('');
+
+    // Function to handle clicks on protected links
+    const handleProtectedLink = (e, path) => {
+        if (!isAuthenticated) {
+            e.preventDefault();
+            setMessage('Please log in to access this page');
+            setShowMessage(true);
+            
+            // Hide message after 3 seconds
+            setTimeout(() => {
+                setShowMessage(false);
+            }, 3000);
+            
+            // Navigate to login page
+            navigate('/login', { state: { from: path } });
+        }
+    };
+
     return (
         <div>
+            {/* Message notification */}
+            {showMessage && (
+                <div className="fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded shadow-lg z-50 animate-fadeIn">
+                    {message}
+                </div>
+            )}
+            
             {/*header*/}
-            <header className="border-b border-[#ff4757]-800 py-4">
+            <header className="border-b border-[gray]-800 py-4">
                 <div className="container mx-auto flex justify-between items-center px-6">
                     <h1 className="logo"><Link to="/">CrimeSceneSolver</Link></h1>
                     <nav className="flex gap-6 items-center">
                         <Link to="/" className="hover:text-gray-400">Home</Link>
-                        <Link to="/upload" className="hover:text-gray-400">Upload</Link>
+                        
+                        {/* Protected link */}
+                        <Link 
+                            to="/upload" 
+                            className="hover:text-gray-400"
+                            onClick={(e) => handleProtectedLink(e, '/upload')}
+                        >
+                            Upload
+                        </Link>
+                        
                         <Link to="/contact" className="hover:text-gray-400">Contact</Link>
-                        <Link to="/Login" className="btn">Sign Up / Log In</Link>
+                        
+                        {isAuthenticated ? (
+                            <div className="flex items-center gap-4">
+                                <span className="text-[#ff4757] bold">Welcome {user?.username}</span>
+                                <button onClick={logout} className="btn">Log Out</button>
+                            </div>
+                        ) : (
+                            <Link to="/Login" className="btn">Sign Up / Log In</Link>
+                        )}
                     </nav>
                 </div>
             </header>
@@ -24,7 +71,17 @@ function Index() {
                     advanced tools for faster, more accurate case resolution.
                 </p>
                 <div className="mt-8">
-                    <Link to="/Login" className="btn-lg">Get Started Now</Link>
+                    {isAuthenticated ? (
+                        <Link to="/upload" className="btn-lg">Go to upload</Link>
+                    ) : (
+                        <Link 
+                            to="/Login" 
+                            state={{ from: '/upload' }}
+                            className="btn-lg"
+                        >
+                            Get Started Now
+                        </Link>
+                    )}
                 </div>
             </section>
 
@@ -66,7 +123,14 @@ function Index() {
                     </div>
                 </div>
                 <div className="mt-8 text-center">
-                    <Link to="/Login" className="btn">Explore All Features</Link>
+                    <Link 
+                        to={isAuthenticated ? "/upload" : "/Login"} 
+                        state={!isAuthenticated ? { from: '/upload' } : undefined}
+                        className="btn"
+                        onClick={(e) => !isAuthenticated && handleProtectedLink(e, '/upload')}
+                    >
+                        Explore All Features
+                    </Link>
                 </div>
             </section>
             <section className="how-it-works">
@@ -104,7 +168,14 @@ function Index() {
                     <p><strong>Pro Plan:</strong> Includes AI-powered pattern detection and enhanced collaboration tools.</p>
                     <p><strong>Enterprise Plan:</strong> Customizable solution with dedicated support and advanced analytics.</p>
                     <p className="mt-4">
-                        <Link to="/pricing" className="btn">View Pricing Details</Link>
+                        <Link 
+                            to={isAuthenticated ? "/pricing" : "/login"}
+                            state={!isAuthenticated ? { from: '/pricing' } : undefined}
+                            className="btn"
+                            onClick={(e) => !isAuthenticated && handleProtectedLink(e, '/pricing')}
+                        >
+                            View Pricing Details
+                        </Link>
                     </p>
                 </div>
             </section>
@@ -112,8 +183,8 @@ function Index() {
             <section className="testimonials">
                 <h3 className="text-2xl font-bold mb-4">Trusted by Investigators</h3>
                 <blockquote className="quote">
-                    “We closed a complex 6-month investigation in under 2 weeks after implementing CrimeSceneSolver. The
-                    AI-driven analysis and real-time collaboration features were a game changer for our team.”
+                    "We closed a complex 6-month investigation in under 2 weeks after implementing CrimeSceneSolver. The
+                    AI-driven analysis and real-time collaboration features were a game changer for our team."
                 </blockquote>
                 <p className="quote-author">— Detective Lara Monroe, Forensics Division</p>
             </section>
@@ -134,6 +205,17 @@ function Index() {
                     </p>
                 </div>
             </section>
+            
+            {/* Add CSS for animation */}
+            <style jsx>{`
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                .animate-fadeIn {
+                    animation: fadeIn 0.3s ease-in;
+                }
+            `}</style>
         </div>
     );
 }
