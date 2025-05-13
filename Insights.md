@@ -197,3 +197,218 @@ The project aligns with a spiritual-analytical framework:
 | 0 | Material Input | *Avidya* – Unrefined perception |
 | 1 | Discrimination & Purification | *Viveka* – Stoic discernment |
 | 2 | Realized Narrative & Reporting | *Leela* – Krishna's divine play |
+
+# Instructions Used in Generating the `CLIP-BasedAnomalyInference.py`:
+
+## Phase 0 – CLIP-Based Temporal Anomaly Inference
+
+**Developer Instructions for Contract Delivery**
+Target: UCF-Crime dataset (Temporal Anomaly Annotation format)
+
+---
+
+### **Objective**
+
+Build a modular and CLI-executable pipeline that processes a video, extracts semantic anomaly cues using CLIP, and produces both:
+
+1. A detailed `.json` file (soft-labels, anomaly segments)
+2. A UCF-compatible `.txt` row like:
+
+```plaintext
+Abuse028_x264.mp4  Abuse  165  240  -1  -1
+```
+
+---
+
+## Implementation Steps
+
+---
+
+### **Step 1 – Frame Extraction (30 FPS)**
+
+**Input:** Raw video
+**Output:** Folder of JPEG frames, named sequentially
+
+**Command:**
+
+```bash
+ffmpeg -i Abuse028_x264.mp4 -r 30 frames/Abuse028_x264/frame_%06d.jpg
+```
+
+Ensure consistent naming:
+`frames/Abuse028_x264/frame_000001.jpg` …
+
+---
+
+### **Step 2 – Frame Embedding with CLIP**
+
+**Model:** `ViT-B/32` or `ViT-L/14` (OpenAI or Huggingface)
+**Input:** Extracted frames
+**Output:** Embedding tensor per frame
+
+**Process:**
+
+* Load CLIP model
+* Normalize and preprocess each frame
+* Pass through image encoder
+* Store embeddings (e.g., in a `.pt` or memory-mapped structure)
+
+---
+
+### **Step 3 – Prompt Scoring**
+
+Use 4 semantic prompts:
+
+* `"normal scene"`
+* `"anomaly happening"`
+* `"a person attacking"`
+* `"suspicious object"`
+
+**Process:**
+
+* Encode all prompts once with CLIP's text encoder
+* For each frame embedding, compute cosine similarity against each prompt
+* Store result:
+
+```json
+{
+  "frame_id": 187,
+  "scores": {
+    "normal": 0.85,
+    "anomaly": 0.45,
+    "attack": 0.32,
+    "suspicious": 0.41
+  }
+}
+```
+
+---
+
+### **Step 4 – Anomaly Deviation Calculation**
+
+**Logic:**
+
+```python
+deviation = max(anomaly - normal, attack - normal, suspicious - normal)
+```
+
+* Output is a 1D array of floats across video length
+* This will form the anomaly signal curve
+
+---
+
+### **Step 5 – Semantic Spike Detection**
+
+Use `scipy.signal.find_peaks()`:
+
+```python
+from scipy.signal import find_peaks
+peaks, _ = find_peaks(deviation_array, height=0.2, distance=90)
+```
+
+Tune `height` and `distance` as hyperparameters
+Each spike becomes a candidate anomaly center
+
+---
+
+### **Step 6 – Segment Window Extraction**
+
+Each peak frame index `i` becomes the center:
+
+```python
+start = max(0, i - 120)
+end = min(total_frames - 1, i + 120)
+```
+
+Window = 241 frames around spike
+Add metadata for each segment:
+
+```json
+{
+  "start_frame": 165,
+  "end_frame": 240,
+  "center": 202,
+  "score": 0.91
+}
+```
+
+---
+
+### **Step 7 – Output Generation**
+
+#### a. JSON Format
+
+```json
+{
+  "video": "Abuse028_x264.mp4",
+  "anomaly_segments": [
+    {
+      "start_frame": 165,
+      "end_frame": 240,
+      "center": 202,
+      "score": 0.91
+    }
+  ],
+  "frame_scores": {
+    "187": {"normal": 0.85, "anomaly": 0.45, ...}
+  },
+  "deviation_curve": [...]
+}
+```
+
+#### b. UCF-Compatible Text Line Format
+
+For every video, write a single line like:
+
+```plaintext
+Abuse028_x264.mp4  Abuse  165  240  -1  -1
+```
+
+**Rules:**
+
+* Use first and second spike for 3rd-6th columns
+* If only one spike, fill `-1 -1` in 5th and 6th columns
+* If no spike, optionally omit or use `-1` for all frames
+
+---
+
+### **Step 8 – Directory Structure**
+
+```
+outputs/
+├── Abuse028_x264.json
+├── Temporal_Anomaly_Annotation_GEN.txt
+├── soft_labels.csv            # Optional
+└── frames/Abuse028_x264/      # Temporary, deletable
+```
+
+---
+
+### **Step 9 – Developer Deliverables**
+
+* `phase0_infer.py` or `clip_anomaly_detect.ipynb`
+* Executable CLI:
+
+```bash
+python phase0_infer.py \
+    --video data/Abuse028_x264.mp4 \
+    --output_dir outputs/ \
+    --model ViT-B/32
+```
+
+* Outputs:
+
+  1. `.json` for detailed analysis
+  2. `.txt` for annotation integration
+  3. Optional `.csv` for debugging visualizations
+
+---
+
+### Criteria
+
+* Accurate frame-wise embedding and scoring
+* Clear spike-based anomaly detection
+* Strict adherence to output formatting
+* Modular code, scalable to batch video input
+
+---
