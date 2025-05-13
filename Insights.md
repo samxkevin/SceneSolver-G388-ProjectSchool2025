@@ -412,3 +412,7 @@ python phase0_infer.py \
 * Modular code, scalable to batch video input
 
 ---
+Phase 0: (Time: 10:03 PM, 13th May) 
+Text in Droppbox Link of the Dataset: `Abuse028_x264.mp4  Abuse  165  240  -1  -1 `
+Text generated in Output: `Abuse028_x264.mp4  Abuse  0  171  79  319`
+Most sit and Work on Refining this.
