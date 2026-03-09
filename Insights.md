@@ -192,11 +192,11 @@ class EnhancedTimeSformer(nn.Module):
 
 The project aligns with a spiritual-analytical framework:
 
-| Phase | Meaning | Symbolic Layer |
-|-------|---------|----------------|
-| 0 | Material Input | *Avidya* – Unrefined perception |
-| 1 | Discrimination & Purification | *Viveka* – Stoic discernment |
-| 2 | Realized Narrative & Reporting | *Leela* – Krishna's divine play |
+| Phase | Meaning |
+|-------|---------|
+| 0 | Material Input | 
+| 1 | Discrimination & Purification | 
+| 2 | Realized Narrative & Reporting | 
 
 # Instructions Used in Generating the `CLIP-BasedAnomalyInference.py`:
 
