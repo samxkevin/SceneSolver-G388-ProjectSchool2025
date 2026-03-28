@@ -1,0 +1,13 @@
+Best acc so far: 0.9556
+
+=== Test Evaluation ===
+Test Accuracy: 0.9667
+Classification Report:
+               precision    recall  f1-score   support
+
+      Normal     1.0000    0.9231    0.9600        13
+     Anomaly     0.9444    1.0000    0.9714        17
+
+    accuracy                         0.9667        30
+   macro avg     0.9722    0.9615    0.9657        30
+weighted avg     0.9685    0.9667    0.9665        30

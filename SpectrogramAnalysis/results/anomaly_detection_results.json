@@ -1,0 +1,7 @@
+{
+  "video_path": "/content/drive/MyDrive/SceneSolverG388/AnomalyDetection/normal/Normal_Videos_015_x264.mp4",
+  "total_windows": 9,
+  "threshold": 0.0,
+  "num_anomalies": 0,
+  "anomalies": []
+}
